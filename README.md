@@ -24,22 +24,32 @@ Based on Thariq Shihipar's [_The unreasonable effectiveness of HTML_](https://th
 npx skills add julianoczkowski/html
 ```
 
-The interactive CLI will walk you through which agents to target (Claude Code, Cursor, Codex, Windsurf, and 40+ others) and whether to install at project or global scope.
+The interactive CLI walks you through scope (global vs project) and which agents to target. Universal agents (Cursor, Codex, GitHub Copilot, and 12+ others) are always included; **Claude Code lives under "Additional agents" and must be toggled on explicitly** with the spacebar — otherwise the skill won't show up in `~/.claude/skills/`.
+
+Prefer a one-shot, no-prompts install? Use the flags:
+
+```bash
+# Claude Code, globally (available across all projects)
+npx skills add julianoczkowski/html --agent claude-code -g -y
+
+# Every supported agent the CLI knows about
+npx skills add julianoczkowski/html --agent '*' -g -y
+```
 
 ### Manual install
 
-The skill lives in the `html/` subdirectory of this repo. Copy just that folder:
+The skill lives in `skills/html/` inside this repo. Copy just that folder:
 
 ```bash
 # Personal (available across all projects)
 git clone https://github.com/julianoczkowski/html /tmp/html-skill-src
-cp -r /tmp/html-skill-src/html ~/.claude/skills/html
+cp -r /tmp/html-skill-src/skills/html ~/.claude/skills/html
 rm -rf /tmp/html-skill-src
 
 # Project-scoped (checked into the repo)
 mkdir -p .claude/skills
 git clone https://github.com/julianoczkowski/html /tmp/html-skill-src
-cp -r /tmp/html-skill-src/html .claude/skills/html
+cp -r /tmp/html-skill-src/skills/html .claude/skills/html
 rm -rf /tmp/html-skill-src
 ```
 
@@ -128,7 +138,7 @@ Real requests cross pattern boundaries. The skill picks one primary pattern by w
 
 ## Project Organization
 
-The repo root carries metadata (this README, LICENSE, SECURITY, screenshots). The skill itself lives in `html/`, which is what `npx skills add` copies into `~/.claude/skills/html/`:
+The repo root carries metadata (this README, LICENSE, SECURITY, screenshots). The skill itself lives in `skills/html/` — the Agent Skills spec's canonical primary path. `npx skills add` finds it there on first lookup and copies the directory into `~/.claude/skills/html/`:
 
 ```
 .                             ← repo root (this is what you see on GitHub)
@@ -136,27 +146,28 @@ The repo root carries metadata (this README, LICENSE, SECURITY, screenshots). Th
 ├── LICENSE
 ├── SECURITY.md
 ├── *.png                     hero + screenshots used in this README
-└── html/                     ← THE SKILL — installed to ~/.claude/skills/html/
-    ├── SKILL.md              umbrella: philosophy, scope, conventions, router
-    ├── patterns/             per-pattern playbooks (also slash commands)
-    │   ├── options.md        → /options
-    │   ├── plan.md           → /plan
-    │   ├── status.md         → /status
-    │   ├── explainer.md      → /explainer
-    │   ├── deck.md           → /deck
-    │   ├── editor.md         → /editor
-    │   ├── diagram.md        → /diagram
-    │   ├── table.md          → /table
-    │   ├── pr.md             → /pr
-    │   ├── codemap.md        → /codemap
-    │   ├── tokens.md         → /tokens
-    │   └── motion.md         → /motion
-    ├── templates/
-    │   └── base.html         shared boilerplate, color tokens, utility-class kit
-    └── gallery/              look + interaction references (not shape)
-        ├── look.html         swatches, type ramp, callouts, cards, timeline
-        ├── interactions.html sliders, toggles, drag-and-drop, sort, filter
-        └── navigation.html   tabs, deck, side-nav, anchor row, details
+└── skills/
+    └── html/                 ← THE SKILL — installed to ~/.claude/skills/html/
+        ├── SKILL.md          umbrella: philosophy, scope, conventions, router
+        ├── patterns/         per-pattern playbooks (also slash commands)
+        │   ├── options.md    → /options
+        │   ├── plan.md       → /plan
+        │   ├── status.md     → /status
+        │   ├── explainer.md  → /explainer
+        │   ├── deck.md       → /deck
+        │   ├── editor.md     → /editor
+        │   ├── diagram.md    → /diagram
+        │   ├── table.md      → /table
+        │   ├── pr.md         → /pr
+        │   ├── codemap.md    → /codemap
+        │   ├── tokens.md     → /tokens
+        │   └── motion.md     → /motion
+        ├── templates/
+        │   └── base.html     shared boilerplate, color tokens, utility-class kit
+        └── gallery/          look + interaction references (not shape)
+            ├── look.html        swatches, type ramp, callouts, cards, timeline
+            ├── interactions.html sliders, toggles, drag-and-drop, sort, filter
+            └── navigation.html   tabs, deck, side-nav, anchor row, details
 ```
 
 Pattern playbooks (70–150 lines each) own the **structural skeleton** of each artifact. `base.html` owns the **look**. The gallery files are **references** — patterns point at them so the model doesn't reinvent the same primitive twelve different ways.
