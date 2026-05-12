@@ -37,10 +37,6 @@ mkdir -p .claude/skills
 git clone https://github.com/julianoczkowski/html .claude/skills/html
 ```
 
-## Security
-
-These files are **instructions for local AI tools**. Treat them like any other project dependency: **review** the skill before using it in sensitive or production contexts, and keep your editor, CLI, and API keys on trusted machines. We welcome **responsible disclosure** of anything in this repo that could cause agents to act unsafely; please use the process in [SECURITY.md](SECURITY.md) instead of public issues. Licensing and disclaimer: [LICENSE](LICENSE) (MIT).
-
 ## What this skill is for
 
 **Agent-generated artifacts for a human reader.** Throwaway or reference, not production.
@@ -103,6 +99,18 @@ Every artifact uses the same restrained design system — warm cream canvas, mut
 
 The `gallery/` folder contains three reference files: `look.html` (color/type/components), `interactions.html` (sliders, toggles, drag-and-drop, filter bars, sortable lists), `navigation.html` (tabs, decks, sticky side-nav). When you ask for live tuning, the skill pulls the primitive from `interactions.html` instead of inventing one per artifact. Shape — what sections to include, what order — stays in the pattern playbooks.
 
+<p align="left">
+  <img src="look_ref.png" alt="Look reference — prompt block and surface tokens (canvas, surface-soft, surface-card, surface-cream-strong, coral, surface-dark)" width="100%" />
+</p>
+
+<p align="left">
+  <img src="interaction_primitives.png" alt="Interaction primitives — range slider example with live output and copy-paste code" width="100%" />
+</p>
+
+<p align="left">
+  <img src="interaction_primitives2.png" alt="Interaction primitives — sortable list (drag to reorder) and filter bar (search plus category chips)" width="100%" />
+</p>
+
 ### Combining patterns is normal
 
 Real requests cross pattern boundaries. The skill picks one primary pattern by which most determines shape, and borrows components from the secondary:
@@ -146,6 +154,10 @@ Two places to edit:
 
 - **`templates/base.html`** — swap the color palette for your design system's tokens, change the font stack, adjust max-width. Everything inherits from this.
 - **Individual patterns** — if your team has specific structure for, say, weekly status (custom sections, specific metrics in the at-a-glance row), edit `patterns/status.md` to encode it.
+
+## Security
+
+These files are **instructions for local AI tools**. Treat them like any other project dependency: **review** the skill before using it in sensitive or production contexts, and keep your editor, CLI, and API keys on trusted machines. We welcome **responsible disclosure** of anything in this repo that could cause agents to act unsafely; please use the process in [SECURITY.md](SECURITY.md) instead of public issues. Licensing and disclaimer: [LICENSE](LICENSE) (MIT).
 
 ## Credits
 
