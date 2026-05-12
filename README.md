@@ -24,17 +24,10 @@ Based on Thariq Shihipar's [_The unreasonable effectiveness of HTML_](https://th
 npx skills add julianoczkowski/html
 ```
 
-The interactive CLI walks you through scope (global vs project) and which agents to target. Universal agents (Cursor, Codex, GitHub Copilot, and 12+ others) are always included; **Claude Code lives under "Additional agents" and must be toggled on explicitly** with the spacebar — otherwise the skill won't show up in `~/.claude/skills/`.
+The interactive CLI walks you through scope (global vs project) and which agents to target. A few things to know as you click through:
 
-Prefer a one-shot, no-prompts install? Use the flags:
-
-```bash
-# Claude Code, globally (available across all projects)
-npx skills add julianoczkowski/html --agent claude-code -g -y
-
-# Every supported agent the CLI knows about
-npx skills add julianoczkowski/html --agent '*' -g -y
-```
+- Universal agents (Cursor, Codex, GitHub Copilot, and 12+ others) are always included; **Claude Code lives under "Additional agents" and must be toggled on explicitly** with the spacebar.
+- When the CLI asks whether to **copy** files or **symlink** them, pick **copy**. Symlinks work for some agents and silently break for others (Claude Code among them on macOS).
 
 ### Manual install
 
