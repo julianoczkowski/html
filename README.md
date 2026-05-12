@@ -28,13 +28,19 @@ The interactive CLI will walk you through which agents to target (Claude Code, C
 
 ### Manual install
 
+The skill lives in the `html/` subdirectory of this repo. Copy just that folder:
+
 ```bash
 # Personal (available across all projects)
-git clone https://github.com/julianoczkowski/html ~/.claude/skills/html
+git clone https://github.com/julianoczkowski/html /tmp/html-skill-src
+cp -r /tmp/html-skill-src/html ~/.claude/skills/html
+rm -rf /tmp/html-skill-src
 
 # Project-scoped (checked into the repo)
 mkdir -p .claude/skills
-git clone https://github.com/julianoczkowski/html .claude/skills/html
+git clone https://github.com/julianoczkowski/html /tmp/html-skill-src
+cp -r /tmp/html-skill-src/html .claude/skills/html
+rm -rf /tmp/html-skill-src
 ```
 
 ## What this skill is for
@@ -122,28 +128,35 @@ Real requests cross pattern boundaries. The skill picks one primary pattern by w
 
 ## Project Organization
 
+The repo root carries metadata (this README, LICENSE, SECURITY, screenshots). The skill itself lives in `html/`, which is what `npx skills add` copies into `~/.claude/skills/html/`:
+
 ```
-html/
-├── SKILL.md                  ← umbrella: philosophy, scope, conventions, router
-├── patterns/                 ← per-pattern playbooks (also slash commands)
-│   ├── options.md            → /options
-│   ├── plan.md               → /plan
-│   ├── status.md             → /status
-│   ├── explainer.md          → /explainer
-│   ├── deck.md               → /deck
-│   ├── editor.md             → /editor
-│   ├── diagram.md            → /diagram
-│   ├── table.md              → /table
-│   ├── pr.md                 → /pr
-│   ├── codemap.md            → /codemap
-│   ├── tokens.md             → /tokens
-│   └── motion.md             → /motion
-├── templates/
-│   └── base.html             ← shared boilerplate, color tokens, utility-class kit
-└── gallery/                  ← look + interaction references (not shape)
-    ├── look.html             ← swatches, type ramp, callouts, cards, timeline
-    ├── interactions.html     ← sliders, toggles, drag-and-drop, sort, filter
-    └── navigation.html       ← tabs, deck, side-nav, anchor row, details
+.                             ← repo root (this is what you see on GitHub)
+├── README.md
+├── LICENSE
+├── SECURITY.md
+├── *.png                     hero + screenshots used in this README
+└── html/                     ← THE SKILL — installed to ~/.claude/skills/html/
+    ├── SKILL.md              umbrella: philosophy, scope, conventions, router
+    ├── patterns/             per-pattern playbooks (also slash commands)
+    │   ├── options.md        → /options
+    │   ├── plan.md           → /plan
+    │   ├── status.md         → /status
+    │   ├── explainer.md      → /explainer
+    │   ├── deck.md           → /deck
+    │   ├── editor.md         → /editor
+    │   ├── diagram.md        → /diagram
+    │   ├── table.md          → /table
+    │   ├── pr.md             → /pr
+    │   ├── codemap.md        → /codemap
+    │   ├── tokens.md         → /tokens
+    │   └── motion.md         → /motion
+    ├── templates/
+    │   └── base.html         shared boilerplate, color tokens, utility-class kit
+    └── gallery/              look + interaction references (not shape)
+        ├── look.html         swatches, type ramp, callouts, cards, timeline
+        ├── interactions.html sliders, toggles, drag-and-drop, sort, filter
+        └── navigation.html   tabs, deck, side-nav, anchor row, details
 ```
 
 Pattern playbooks (70–150 lines each) own the **structural skeleton** of each artifact. `base.html` owns the **look**. The gallery files are **references** — patterns point at them so the model doesn't reinvent the same primitive twelve different ways.
