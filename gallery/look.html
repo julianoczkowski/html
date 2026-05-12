@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gallery · Look reference</title>
+  <style>
+    :root {
+      --canvas: #faf9f5;
+      --surface-soft: #f5f0e8;
+      --surface-card: #efe9de;
+      --surface-cream-strong: #e8e0d2;
+      --surface-dark: #181715;
+      --surface-dark-elevated: #252320;
+      --surface-dark-soft: #1f1e1b;
+      --coral: #cc785c;
+      --coral-active: #a9583e;
+      --coral-soft: #f3e2d8;
+      --ink: #141413;
+      --body-strong: #252523;
+      --body: #3d3d3a;
+      --muted: #6c6a64;
+      --muted-soft: #8e8b82;
+      --on-primary: #ffffff;
+      --on-dark: #faf9f5;
+      --on-dark-soft: #a09d96;
+      --hairline: #e6dfd8;
+      --hairline-soft: #ebe6df;
+      --good: #5db872;
+      --good-soft: #dff1e1;
+      --warn: #d4a017;
+      --warn-soft: #fbeed4;
+      --bad: #c64545;
+      --bad-soft: #f7dee1;
+      --r-md: 8px;
+      --r-lg: 12px;
+      --r-pill: 9999px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font: 16px/1.55 "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--body);
+      background: var(--canvas);
+    }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 64px 24px 96px; }
+    h1, h2, h3 {
+      font-family: "EB Garamond", "Cormorant Garamond", "Tiempos Headline", Garamond, serif;
+      font-weight: 400;
+      color: var(--ink);
+      margin: 0 0 0.4em;
+      line-height: 1.1;
+    }
+    h1 { font-size: 3rem; letter-spacing: -0.025em; }
+    h2 { font-size: 1.8rem; letter-spacing: -0.02em; margin-top: 3em; padding-top: 1.6em; border-top: 1px solid var(--hairline); }
+    h3 { font-size: 1.25rem; letter-spacing: -0.012em; margin-top: 1.8em; }
+    p { margin: 0 0 1em; }
+    code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.85em; background: var(--surface-card); padding: 0.1em 0.4em; border-radius: 4px; color: var(--ink); }
+
+    .kicker {
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.8em; font-weight: 500;
+    }
+    .sub {
+      color: var(--muted); font-size: 1.05rem;
+      max-width: 640px; margin: 0 0 3em;
+    }
+
+    /* Swatch grid */
+    .swatch-grid {
+      display: grid; gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      margin: 1em 0 2em;
+    }
+    .swatch {
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      overflow: hidden;
+      background: var(--canvas);
+    }
+    .swatch .fill {
+      display: block;
+      width: 100%;
+      height: 64px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .swatch .meta { padding: 10px 12px; }
+    .swatch .name { font-size: 0.88rem; font-weight: 500; color: var(--ink); }
+    .swatch .hex {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Type ramp */
+    .ramp-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      align-items: baseline;
+      gap: 24px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--hairline-soft);
+    }
+    .ramp-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .ramp-sample-h1 { font-family: "EB Garamond", Garamond, serif; font-weight: 400; font-size: 3rem;    letter-spacing: -0.025em; line-height: 1.05; color: var(--ink); }
+    .ramp-sample-h2 { font-family: "EB Garamond", Garamond, serif; font-weight: 400; font-size: 2.1rem;  letter-spacing: -0.02em;  line-height: 1.1;  color: var(--ink); }
+    .ramp-sample-h3 { font-family: "EB Garamond", Garamond, serif; font-weight: 400; font-size: 1.45rem; letter-spacing: -0.012em; line-height: 1.2;  color: var(--ink); }
+    .ramp-sample-body  { font-family: "Inter", sans-serif; font-weight: 400; font-size: 1rem; color: var(--body); }
+    .ramp-sample-small { font-family: "Inter", sans-serif; font-weight: 400; font-size: 0.88rem; color: var(--muted); }
+    .ramp-sample-caps  { font-family: "Inter", sans-serif; font-weight: 500; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
+    .ramp-sample-mono  { font-family: "JetBrains Mono", monospace; font-weight: 400; font-size: 0.92rem; color: var(--ink); }
+
+    /* Surfaces strip */
+    .surfaces { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .surface-box {
+      height: 110px;
+      border-radius: var(--r-md);
+      border: 1px solid var(--hairline);
+      display: flex;
+      align-items: flex-end;
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: "JetBrains Mono", monospace;
+    }
+    .surface-box.canvas       { background: var(--canvas); }
+    .surface-box.soft         { background: var(--surface-soft); }
+    .surface-box.card         { background: var(--surface-card); }
+    .surface-box.cream-strong { background: var(--surface-cream-strong); }
+    .surface-box.coral        { background: var(--coral); color: var(--on-primary); border-color: var(--coral-active); }
+    .surface-box.dark         { background: var(--surface-dark); color: var(--on-dark-soft); border-color: var(--surface-dark); }
+    .surface-box.dark-elev    { background: var(--surface-dark-elevated); color: var(--on-dark-soft); border-color: var(--surface-dark-elevated); }
+
+    /* Callouts */
+    .callout {
+      padding: 16px 20px;
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      margin: 12px 0;
+      border-left: 3px solid;
+      background: var(--surface-card);
+    }
+    .callout > strong:first-child {
+      display: block; font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px;
+    }
+    .callout.info { background: var(--coral-soft); border-color: var(--coral); }
+    .callout.info > strong:first-child { color: var(--coral); }
+    .callout.warn { background: var(--warn-soft); border-color: var(--warn); }
+    .callout.warn > strong:first-child { color: var(--warn); }
+    .callout.bad  { background: var(--bad-soft);  border-color: var(--bad); }
+    .callout.bad  > strong:first-child { color: var(--bad); }
+    .callout.good { background: var(--good-soft); border-color: var(--good); }
+    .callout.good > strong:first-child { color: var(--good); }
+
+    /* Coral callout */
+    .callout-coral {
+      background: var(--coral);
+      color: var(--on-primary);
+      border-radius: var(--r-lg);
+      padding: 48px;
+      margin: 1.6em 0;
+    }
+    .callout-coral h3 { color: var(--on-primary); margin-top: 0; }
+    .callout-coral p  { color: var(--on-primary); opacity: 0.95; }
+
+    /* Dark surface */
+    .surface-dark-block {
+      background: var(--surface-dark);
+      color: var(--on-dark);
+      border-radius: var(--r-lg);
+      padding: 32px;
+      margin: 1.6em 0;
+    }
+    .surface-dark-block h3 { color: var(--on-dark); margin-top: 0; }
+    .surface-dark-block p  { color: var(--on-dark-soft); }
+    .surface-dark-block code { background: var(--surface-dark-soft); color: var(--on-dark); }
+    .surface-dark-block pre {
+      background: var(--surface-dark-soft);
+      color: var(--on-dark);
+      padding: 16px 18px;
+      border-radius: var(--r-md);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      overflow-x: auto;
+      margin: 12px 0 0;
+    }
+
+    /* Chips & badges */
+    .chip {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--r-pill);
+      vertical-align: middle;
+      background: var(--surface-card);
+      color: var(--muted);
+      margin: 4px 4px 4px 0;
+    }
+    .chip.coral { background: var(--coral); color: var(--on-primary); }
+    .chip.info  { background: var(--coral-soft); color: var(--coral-active); }
+    .chip.warn  { background: var(--warn-soft);  color: var(--warn); }
+    .chip.bad   { background: var(--bad-soft);   color: var(--bad); }
+    .chip.good  { background: var(--good-soft);  color: var(--good); }
+
+    /* Cards */
+    .card-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin: 1em 0 2em; }
+    .card {
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-lg);
+      padding: 24px;
+      background: var(--surface-card);
+    }
+    .card .num { font-family: "EB Garamond", Garamond, serif; font-size: 1rem; color: var(--muted); margin-right: 8px; }
+    .card h4 { font-family: "EB Garamond", Garamond, serif; font-weight: 400; font-size: 1.25rem; letter-spacing: -0.012em; color: var(--ink); margin: 0 0 0.4em; }
+    .card .summary { color: var(--body); font-size: 0.95rem; margin: 0.4em 0 1em; }
+    .card.featured { background: var(--surface-dark); border: 0; }
+    .card.featured h4 { color: var(--on-dark); }
+    .card.featured .summary { color: var(--on-dark-soft); }
+    .card.featured .num { color: var(--on-dark-soft); }
+
+    /* Glance row */
+    .glance {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin: 1.2em 0 2em;
+      padding: 24px;
+      background: var(--surface-card);
+      border-radius: var(--r-lg);
+    }
+    .glance .stat .label { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
+    .glance .stat .val { font-family: "EB Garamond", Garamond, serif; font-size: 1.7rem; font-weight: 400; color: var(--ink); letter-spacing: -0.01em; }
+
+    /* Buttons */
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 1em 0 2em; }
+    .button-primary, .button-secondary, .button-text {
+      font: inherit; font-family: "Inter", sans-serif; font-weight: 500; font-size: 0.92rem;
+      cursor: pointer; border-radius: var(--r-md);
+    }
+    .button-primary {
+      background: var(--coral); color: var(--on-primary); border: 0;
+      padding: 12px 22px;
+    }
+    .button-primary:hover { background: var(--coral-active); }
+    .button-secondary {
+      background: var(--canvas); color: var(--ink);
+      border: 1px solid var(--hairline);
+      padding: 11px 20px;
+    }
+    .button-secondary:hover { border-color: var(--muted); }
+    .button-text {
+      background: none; border: 0; color: var(--coral);
+      padding: 4px 0;
+      border-bottom: 1px solid color-mix(in srgb, var(--coral) 30%, transparent);
+      border-radius: 0;
+    }
+
+    /* Timeline */
+    .timeline { position: relative; padding-left: 32px; margin: 1.4em 0 2em; }
+    .timeline::before { content: ""; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--hairline); }
+    .timeline .event { position: relative; padding: 6px 0 14px; }
+    .timeline .event::before {
+      content: ""; position: absolute; left: -32px; top: 12px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--muted-soft);
+      border: 2px solid var(--canvas);
+      margin-left: 2px;
+    }
+    .timeline .event.info::before { background: var(--coral); }
+    .timeline .event.good::before { background: var(--good); }
+    .timeline .event.warn::before { background: var(--warn); }
+    .timeline .event .when {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      color: var(--muted-soft);
+    }
+    .timeline .event h4 {
+      margin: 4px 0;
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--ink);
+    }
+
+    /* Prompt block sample */
+    .prompt {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--body);
+      background: var(--surface-card);
+      border-left: 3px solid var(--coral);
+      padding: 14px 18px;
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      margin: 0 0 2em;
+    }
+    .prompt::before {
+      content: "Prompt";
+      display: block;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 32px 18px 64px; }
+      h1 { font-size: 2.1rem; }
+      h2 { font-size: 1.4rem; }
+      .callout-coral { padding: 28px; }
+      .surface-dark-block { padding: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="kicker">Gallery · Look reference</div>
+    <h1>Look reference</h1>
+    <p class="sub">Every visual primitive in the skill. No narrative content. Use this file to verify that an artifact you produced looks like an artifact this skill produces. Don't copy the structure here — the structure of your artifact comes from the pattern playbook.</p>
+
+    <p class="prompt">This is what a prompt block looks like at the top of every artifact. Verbatim user request, near-verbatim.</p>
+
+    <h2>Surfaces</h2>
+    <p>Cream canvas is the default floor. Coral is scarce, used on primary CTAs and on one full-bleed callout per artifact. Dark navy is the pacing partner — code blocks, mockups, post-mortem panels.</p>
+    <div class="surfaces">
+      <div class="surface-box canvas">canvas #faf9f5</div>
+      <div class="surface-box soft">surface-soft #f5f0e8</div>
+      <div class="surface-box card">surface-card #efe9de</div>
+      <div class="surface-box cream-strong">surface-cream-strong #e8e0d2</div>
+      <div class="surface-box coral">coral #cc785c</div>
+      <div class="surface-box dark">surface-dark #181715</div>
+      <div class="surface-box dark-elev">surface-dark-elev #252320</div>
+    </div>
+
+    <h2>Color tokens</h2>
+    <h3>Brand &amp; ink</h3>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="fill" style="background:#cc785c"></div><div class="meta"><div class="name">coral</div><div class="hex">#cc785c</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#a9583e"></div><div class="meta"><div class="name">coral-active</div><div class="hex">#a9583e</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#f3e2d8"></div><div class="meta"><div class="name">coral-soft</div><div class="hex">#f3e2d8</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#141413"></div><div class="meta"><div class="name">ink</div><div class="hex">#141413</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#3d3d3a"></div><div class="meta"><div class="name">body</div><div class="hex">#3d3d3a</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#6c6a64"></div><div class="meta"><div class="name">muted</div><div class="hex">#6c6a64</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#8e8b82"></div><div class="meta"><div class="name">muted-soft</div><div class="hex">#8e8b82</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#e6dfd8"></div><div class="meta"><div class="name">hairline</div><div class="hex">#e6dfd8</div></div></div>
+    </div>
+
+    <h3>Semantic</h3>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="fill" style="background:#5db872"></div><div class="meta"><div class="name">good</div><div class="hex">#5db872</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#dff1e1"></div><div class="meta"><div class="name">good-soft</div><div class="hex">#dff1e1</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#d4a017"></div><div class="meta"><div class="name">warn</div><div class="hex">#d4a017</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#fbeed4"></div><div class="meta"><div class="name">warn-soft</div><div class="hex">#fbeed4</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#c64545"></div><div class="meta"><div class="name">bad</div><div class="hex">#c64545</div></div></div>
+      <div class="swatch"><div class="fill" style="background:#f7dee1"></div><div class="meta"><div class="name">bad-soft</div><div class="hex">#f7dee1</div></div></div>
+    </div>
+
+    <h2>Type ramp</h2>
+    <p>Display = EB Garamond (Copernicus stand-in) at weight 400 with negative letter-spacing. Body = Inter / system humanist sans. Mono = JetBrains Mono / ui-monospace. Display weight stays 400; never bold.</p>
+    <div class="ramp-row"><div class="ramp-label">h1</div><div class="ramp-sample-h1">Meet your thinking partner</div></div>
+    <div class="ramp-row"><div class="ramp-label">h2</div><div class="ramp-sample-h2">The unreasonable effectiveness of HTML</div></div>
+    <div class="ramp-row"><div class="ramp-label">h3</div><div class="ramp-sample-h3">Spatial information markdown flattens</div></div>
+    <div class="ramp-row"><div class="ramp-label">body</div><div class="ramp-sample-body">Default running text in Inter at 16px, line-height 1.55, weight 400. This is the workhorse paragraph style.</div></div>
+    <div class="ramp-row"><div class="ramp-label">small</div><div class="ramp-sample-small">Fine print, secondary text, captions. Muted ink color.</div></div>
+    <div class="ramp-row"><div class="ramp-label">caps</div><div class="ramp-sample-caps">Section labels · kicker · category tags</div></div>
+    <div class="ramp-row"><div class="ramp-label">mono</div><div class="ramp-sample-mono">const example = "JetBrains Mono"</div></div>
+
+    <h2>Callouts</h2>
+    <div class="callout info"><strong>Info</strong>Short directive content lives in callouts. Coral-soft for info, the brand-toned voice.</div>
+    <div class="callout good"><strong>Decision</strong>Resolved item. The green tint signals "settled, no longer a risk."</div>
+    <div class="callout warn"><strong>Watch</strong>Yellow callouts are open questions or known risks — not yet bad, but not yet OK.</div>
+    <div class="callout bad"><strong>Blocker</strong>Red callouts are blockers. Use scarcely; if everything is red, nothing is.</div>
+
+    <h2>Coral callout (the voltage moment)</h2>
+    <p>One per artifact, max. Full-bleed coral. The CTA inside flips to a cream-tinted button so it reads against the coral fill.</p>
+    <div class="callout-coral">
+      <h3>Ship the artifact, not the markdown</h3>
+      <p>This is the brand-voltage callout. Use it for the headline takeaway, the single sentence the reader should leave with. If your artifact has two of these, you have one too many.</p>
+      <button class="button-secondary">Read the essay</button>
+    </div>
+
+    <h2>Dark surface (pacing partner)</h2>
+    <p>Use dark for code mockups, model showcases, post-mortem root-cause panels — anywhere the reader is looking at product chrome or raw output. Don't put two dark blocks back-to-back; alternate with cream.</p>
+    <div class="surface-dark-block">
+      <h3>Stack trace</h3>
+      <p>Real product chrome belongs on dark.</p>
+      <pre><code>TypeError: cannot read property 'foo' of undefined
+  at handleRequest (server.js:142:18)
+  at process.nextTick (internal/timers.js:438:13)</code></pre>
+    </div>
+
+    <h2>Chips &amp; badges</h2>
+    <div>
+      <span class="chip">default</span>
+      <span class="chip coral">primary</span>
+      <span class="chip info">info</span>
+      <span class="chip good">shipped</span>
+      <span class="chip warn">at risk</span>
+      <span class="chip bad">blocked</span>
+    </div>
+
+    <h2>Cards (cream &amp; featured)</h2>
+    <div class="card-row">
+      <div class="card">
+        <h4><span class="num">01</span>Cream card</h4>
+        <div class="summary">Default card surface. Used for feature blocks, option columns, content sections.</div>
+      </div>
+      <div class="card">
+        <h4><span class="num">02</span>Second cream card</h4>
+        <div class="summary">Always pair with at least one sibling. Single card in a grid is a code smell — use a callout instead.</div>
+      </div>
+      <div class="card featured">
+        <h4><span class="num">03</span>Featured (dark)</h4>
+        <div class="summary">Dark card variant — use for the recommended option, the chosen plan, the live model.</div>
+      </div>
+    </div>
+
+    <h2>At-a-glance row</h2>
+    <div class="glance">
+      <div class="stat"><div class="label">Owner</div><div class="val">A. Lin</div></div>
+      <div class="stat"><div class="label">Target</div><div class="val">Q3</div></div>
+      <div class="stat"><div class="label">Status</div><div class="val">On track</div></div>
+      <div class="stat"><div class="label">Risk</div><div class="val">Low</div></div>
+    </div>
+
+    <h2>Timeline</h2>
+    <div class="timeline">
+      <div class="event info"><div class="when">Apr 12</div><h4>Kickoff</h4><p>Scoping complete; team aligned on three candidate approaches.</p></div>
+      <div class="event"><div class="when">May 03</div><h4>Prototype</h4><p>First working slice. Internal demo on 04/30.</p></div>
+      <div class="event warn"><div class="when">May 19</div><h4>Cross-team review</h4><p>Open question on data-retention policy — see callout above.</p></div>
+      <div class="event good"><div class="when">Jun 07</div><h4>Beta launch</h4><p>Shipped to internal beta cohort. Metrics dashboard up.</p></div>
+    </div>
+
+    <h2>Buttons</h2>
+    <div class="btn-row">
+      <button class="button-primary">Copy as markdown</button>
+      <button class="button-secondary">Reset</button>
+      <button class="button-text">View source</button>
+    </div>
+
+    <h2>How to use this file</h2>
+    <p>Before producing an artifact, open this file mentally as a reference. After producing it, ask: do the surfaces, type, and chips look like the ones in this file? If yes, the look is right. If not, your tokens have drifted — rewrite them to match <code>templates/base.html</code>.</p>
+    <p>This file shows <em>look</em>, not <em>shape</em>. Shape — what sections to include, what order, what the export emits — lives in the pattern playbooks.</p>
+  </main>
+</body>
+</html>

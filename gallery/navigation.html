@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gallery · Navigation primitives</title>
+  <style>
+    :root {
+      --canvas: #faf9f5;
+      --surface-soft: #f5f0e8;
+      --surface-card: #efe9de;
+      --surface-cream-strong: #e8e0d2;
+      --surface-dark: #181715;
+      --coral: #cc785c;
+      --coral-active: #a9583e;
+      --coral-soft: #f3e2d8;
+      --ink: #141413;
+      --body: #3d3d3a;
+      --muted: #6c6a64;
+      --muted-soft: #8e8b82;
+      --on-primary: #ffffff;
+      --on-dark: #faf9f5;
+      --hairline: #e6dfd8;
+      --good: #5db872;
+      --r-md: 8px;
+      --r-lg: 12px;
+      --r-pill: 9999px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font: 16px/1.55 "Inter", -apple-system, sans-serif; color: var(--body); background: var(--canvas); }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 64px 24px 96px; }
+    h1, h2, h3 { font-family: "EB Garamond", Garamond, serif; font-weight: 400; color: var(--ink); margin: 0 0 0.4em; line-height: 1.1; }
+    h1 { font-size: 3rem; letter-spacing: -0.025em; }
+    h2 { font-size: 1.7rem; letter-spacing: -0.02em; margin-top: 2.8em; padding-top: 1.6em; border-top: 1px solid var(--hairline); }
+    h3 { font-size: 1.2rem; letter-spacing: -0.012em; margin-top: 1.6em; }
+    p { margin: 0 0 1em; }
+    code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.85em; background: var(--surface-card); padding: 0.1em 0.4em; border-radius: 4px; color: var(--ink); }
+    pre {
+      background: var(--surface-dark);
+      color: var(--on-dark);
+      padding: 16px 18px;
+      border-radius: var(--r-md);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      overflow-x: auto;
+      margin: 1em 0 1.6em;
+    }
+    pre code { background: transparent; color: inherit; padding: 0; }
+
+    .kicker { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.8em; font-weight: 500; }
+    .sub { color: var(--muted); font-size: 1.05rem; max-width: 640px; margin: 0 0 3em; }
+    .demo {
+      background: var(--surface-card);
+      border-radius: var(--r-lg);
+      padding: 24px;
+      margin: 1em 0 0;
+    }
+
+    /* ---- Tabs ---- */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--hairline);
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .tabs button {
+      appearance: none;
+      background: transparent;
+      border: 0;
+      color: var(--muted);
+      font: inherit;
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+      font-size: 0.92rem;
+      padding: 10px 16px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .tabs button:hover { color: var(--ink); }
+    .tabs button.active {
+      color: var(--ink);
+      border-bottom-color: var(--coral);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ---- Deck (slides) ---- */
+    .deck {
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      min-height: 240px;
+      padding: 36px 32px;
+      position: relative;
+    }
+    .slide { display: none; }
+    .slide.active { display: block; animation: fadein 0.2s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    .slide h3 {
+      font-family: "EB Garamond", Garamond, serif;
+      font-weight: 400;
+      font-size: 1.8rem;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin: 0 0 0.4em;
+    }
+    .slide p { color: var(--body); font-size: 1.05rem; }
+    .deck-meta {
+      position: absolute;
+      bottom: 14px;
+      right: 18px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.8rem;
+      color: var(--muted-soft);
+    }
+    .deck-nav {
+      position: absolute;
+      bottom: 12px;
+      left: 18px;
+      display: flex;
+      gap: 8px;
+    }
+    .deck-nav button {
+      appearance: none;
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      color: var(--ink);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .deck-nav button:hover { border-color: var(--coral); color: var(--coral); }
+    .deck-hint {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .deck-hint kbd {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      background: var(--surface-card);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--hairline);
+    }
+
+    /* ---- Side nav ---- */
+    .with-side {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 24px;
+    }
+    .side-nav {
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      font-size: 0.9rem;
+    }
+    .side-nav .label {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+    .side-nav a {
+      display: block;
+      padding: 6px 12px;
+      color: var(--muted);
+      text-decoration: none;
+      border-left: 2px solid var(--hairline);
+      border-bottom: 0;
+    }
+    .side-nav a.active {
+      color: var(--ink);
+      border-left-color: var(--coral);
+      background: var(--coral-soft);
+    }
+    .side-nav a:hover { color: var(--ink); }
+    .side-content section { padding: 12px 0; }
+    .side-content section h4 {
+      font-family: "EB Garamond", Garamond, serif;
+      font-weight: 400;
+      font-size: 1.3rem;
+      letter-spacing: -0.012em;
+      color: var(--ink);
+      margin: 0 0 0.4em;
+    }
+
+    /* ---- Collapsible details ---- */
+    details {
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      padding: 14px 18px;
+      margin: 8px 0;
+      background: var(--canvas);
+    }
+    details > summary {
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--ink);
+      list-style: none;
+    }
+    details > summary::before {
+      content: "›";
+      display: inline-block;
+      margin-right: 10px;
+      color: var(--muted);
+      transition: transform 0.15s;
+    }
+    details[open] > summary::before { transform: rotate(90deg); }
+    details > *:not(summary) { margin-top: 0.6em; }
+
+    /* ---- Anchor scroll-spy ---- */
+    .anchor-row {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--surface-card);
+      border-radius: var(--r-md);
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .anchor-row a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: var(--r-pill);
+      border: 0;
+    }
+    .anchor-row a:hover { color: var(--ink); background: var(--canvas); }
+
+    /* ---- Sticky export bar (cross-pattern) ---- */
+    .export-bar {
+      position: sticky;
+      bottom: 0;
+      margin: 2.4em -24px -96px;
+      padding: 18px 24px;
+      background: color-mix(in srgb, var(--canvas) 92%, transparent);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--hairline);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .button-primary {
+      appearance: none; border: 0;
+      background: var(--coral);
+      color: var(--on-primary);
+      font: inherit;
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+      font-size: 0.92rem;
+      padding: 12px 22px;
+      border-radius: var(--r-md);
+      cursor: pointer;
+    }
+    .reset-link {
+      font-size: 0.88rem;
+      color: var(--muted);
+      background: none;
+      border: 0;
+      cursor: pointer;
+      padding: 0;
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 32px 18px 64px; }
+      h1 { font-size: 2.1rem; }
+      .with-side { grid-template-columns: 1fr; }
+      .side-nav { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="kicker">Gallery · Navigation primitives</div>
+    <h1>Navigation primitives</h1>
+    <p class="sub">How the reader moves through an artifact. Tabs for parallel views, deck for sequential read-through, side-nav for long reference, anchors for short jumps, collapsible details for progressive disclosure.</p>
+
+    <h2>Tabs</h2>
+    <p>Use when the same domain has 2–5 parallel views (e.g., explainer with "How", "Why", "When"; options pattern with "Side-by-side", "Detail per option"). Don't use for sequence — use a deck.</p>
+    <div class="demo">
+      <div class="tabs" id="tabs1">
+        <button class="active" data-tab="t1">Overview</button>
+        <button data-tab="t2">Detail</button>
+        <button data-tab="t3">Trade-offs</button>
+      </div>
+      <div class="tab-panel active" id="t1"><p><strong>Overview.</strong> Top-level summary lives here. Tabs are non-modal — switch freely; nothing is "submitted."</p></div>
+      <div class="tab-panel" id="t2"><p><strong>Detail.</strong> Deeper material the reader may not want on first scan. Worth tabbing rather than scrolling because the reader chooses.</p></div>
+      <div class="tab-panel" id="t3"><p><strong>Trade-offs.</strong> The "compare" view. If your options exceed 3, prefer a side-by-side grid instead of tabs.</p></div>
+    </div>
+<pre><code>&lt;div class="tabs"&gt;
+  &lt;button class="active" data-tab="t1"&gt;Overview&lt;/button&gt;
+  &lt;button data-tab="t2"&gt;Detail&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class="tab-panel active" id="t1"&gt;...&lt;/div&gt;
+&lt;div class="tab-panel" id="t2"&gt;...&lt;/div&gt;
+&lt;script&gt;
+  document.querySelectorAll('.tabs button').forEach(b =&gt; {
+    b.addEventListener('click', () =&gt; {
+      b.parentElement.querySelectorAll('button').forEach(x =&gt; x.classList.remove('active'));
+      b.classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p =&gt; p.classList.remove('active'));
+      document.getElementById(b.dataset.tab).classList.add('active');
+    });
+  });
+&lt;/script&gt;</code></pre>
+
+    <h2>Deck (arrow-key slides)</h2>
+    <p>The <code>deck</code> pattern's core nav. Left/right arrow keys, click prev/next, slide counter. Use for short sequential reads (5–15 slides), never for parallel views.</p>
+    <div class="demo">
+      <div class="deck" id="deck">
+        <div class="slide active" data-i="1">
+          <h3>Slide 1 — Premise</h3>
+          <p>Markdown flattens spatial information. HTML restores it.</p>
+        </div>
+        <div class="slide" data-i="2">
+          <h3>Slide 2 — Evidence</h3>
+          <p>Diffs are spatial. Call graphs are spatial. Risks-vs-impact is spatial. None of these survive a markdown wall.</p>
+        </div>
+        <div class="slide" data-i="3">
+          <h3>Slide 3 — Implication</h3>
+          <p>When the content has shape, ship an HTML artifact instead.</p>
+        </div>
+        <div class="deck-nav">
+          <button id="prev">‹</button>
+          <button id="next">›</button>
+        </div>
+        <div class="deck-meta"><span id="deck-num">1</span> / 3</div>
+      </div>
+      <div class="deck-hint">Use <kbd>←</kbd> <kbd>→</kbd> arrows or click prev/next.</div>
+    </div>
+<pre><code>&lt;script&gt;
+  let i = 0;
+  const slides = document.querySelectorAll('.slide');
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) =&gt; s.classList.toggle('active', k === i));
+    document.getElementById('deck-num').textContent = i + 1;
+  }
+  document.getElementById('prev').addEventListener('click', () =&gt; show(i - 1));
+  document.getElementById('next').addEventListener('click', () =&gt; show(i + 1));
+  document.addEventListener('keydown', e =&gt; {
+    if (e.key === 'ArrowLeft')  show(i - 1);
+    if (e.key === 'ArrowRight') show(i + 1);
+  });
+&lt;/script&gt;</code></pre>
+
+    <h2>Side nav (sticky)</h2>
+    <p>Use for long reference pages (codemap, tokens, explainer with many sections). The nav highlights as the reader scrolls.</p>
+    <div class="demo">
+      <div class="with-side">
+        <nav class="side-nav" id="sideNav">
+          <div class="label">On this page</div>
+          <a href="#sec-a" class="active">Auth flow</a>
+          <a href="#sec-b">Token issuance</a>
+          <a href="#sec-c">Refresh strategy</a>
+          <a href="#sec-d">Failure modes</a>
+        </nav>
+        <div class="side-content">
+          <section id="sec-a"><h4>Auth flow</h4><p>Top-level entry: <code>POST /auth/login</code>. Handlers in <code>src/auth/login.ts</code>.</p></section>
+          <section id="sec-b"><h4>Token issuance</h4><p>Signed JWT issued from <code>src/auth/tokens.ts:issue()</code>. Expires after 1h.</p></section>
+          <section id="sec-c"><h4>Refresh strategy</h4><p>Rotating refresh tokens stored in <code>refresh_tokens</code> table; one-time-use.</p></section>
+          <section id="sec-d"><h4>Failure modes</h4><p>Common: clock skew, revoked refresh, missing scope. See <code>tests/auth/edges.test.ts</code>.</p></section>
+        </div>
+      </div>
+    </div>
+
+    <h2>Anchor row</h2>
+    <p>Lightweight alternative to a sidebar. Pin a row of jump-to links at the top of long content. Cheaper than a sticky sidebar; works fine for 4–8 sections.</p>
+    <div class="demo">
+      <div class="anchor-row">
+        <a href="#a1">Premise</a>
+        <a href="#a2">Evidence</a>
+        <a href="#a3">Counter-arguments</a>
+        <a href="#a4">Implications</a>
+        <a href="#a5">Next steps</a>
+      </div>
+      <p style="font-size: 0.88rem; color: var(--muted);">(Demo only — links inside this card are decorative.)</p>
+    </div>
+
+    <h2>Collapsible details</h2>
+    <p>Use for progressive disclosure inside an explainer or a long plan — keep the reader on one page; let them open just the pieces they want.</p>
+    <div class="demo">
+      <details open>
+        <summary>What is the unreasonable effectiveness of HTML?</summary>
+        <p>The observation that markdown — the default agent output format — flattens information that is inherently spatial, comparative, or interactive. A small self-contained HTML file fixes this.</p>
+      </details>
+      <details>
+        <summary>Why not Markdown?</summary>
+        <p>Markdown is linear. Side-by-side comparisons, call graphs, diffs, motion, and toggles can't live there.</p>
+      </details>
+      <details>
+        <summary>Why not a React app?</summary>
+        <p>Because the artifact is disposable. Build steps, dependencies, and frameworks are overhead the reader pays for nothing.</p>
+      </details>
+    </div>
+
+    <h2>Sticky export bar</h2>
+    <p>Universal end-of-artifact element for any interactive page. Left: quiet reset link. Right: primary coral CTA. One per page. Scroll to bottom to see it.</p>
+
+    <h2>How to use this file</h2>
+    <p>When the artifact you're producing needs to move the reader (between views, through a sequence, around a long doc), pick the closest primitive above and adapt. Don't invent new navigation per artifact — the reader's recognition is the point.</p>
+    <p>This file shows <em>navigation</em>. Look is in <code>gallery/look.html</code>. Interactions are in <code>gallery/interactions.html</code>.</p>
+  </main>
+
+  <div class="export-bar">
+    <button class="reset-link" type="button">Reset</button>
+    <button class="button-primary" id="copyBtn">Copy as markdown</button>
+  </div>
+
+  <script>
+    // Tabs
+    document.querySelectorAll('#tabs1 button').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('#tabs1 button').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById(b.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Deck
+    let i = 0;
+    const slides = document.querySelectorAll('.slide');
+    function show(n) {
+      i = Math.max(0, Math.min(slides.length - 1, n));
+      slides.forEach((s, k) => s.classList.toggle('active', k === i));
+      document.getElementById('deck-num').textContent = i + 1;
+    }
+    document.getElementById('prev').addEventListener('click', () => show(i - 1));
+    document.getElementById('next').addEventListener('click', () => show(i + 1));
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft')  show(i - 1);
+      if (e.key === 'ArrowRight') show(i + 1);
+    });
+
+    // Side nav scroll-spy
+    const sideLinks = document.querySelectorAll('#sideNav a');
+    const sections  = ['sec-a','sec-b','sec-c','sec-d'].map(id => document.getElementById(id));
+    const setActive = id => {
+      sideLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    };
+    sideLinks.forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setActive(id);
+      });
+    });
+
+    // Export
+    document.getElementById('copyBtn').addEventListener('click', async (e) => {
+      await navigator.clipboard.writeText('# Navigation gallery snapshot\n\n(No data to export — this file is a reference.)\n');
+      const label = e.target.textContent;
+      e.target.textContent = 'Copied';
+      setTimeout(() => { e.target.textContent = label; }, 1500);
+    });
+  </script>
+</body>
+</html>

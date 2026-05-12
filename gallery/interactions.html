@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gallery · Interaction primitives</title>
+  <style>
+    :root {
+      --canvas: #faf9f5;
+      --surface-soft: #f5f0e8;
+      --surface-card: #efe9de;
+      --surface-cream-strong: #e8e0d2;
+      --surface-dark: #181715;
+      --coral: #cc785c;
+      --coral-active: #a9583e;
+      --coral-soft: #f3e2d8;
+      --ink: #141413;
+      --body: #3d3d3a;
+      --muted: #6c6a64;
+      --muted-soft: #8e8b82;
+      --on-primary: #ffffff;
+      --on-dark: #faf9f5;
+      --hairline: #e6dfd8;
+      --good: #5db872;
+      --good-soft: #dff1e1;
+      --warn: #d4a017;
+      --bad: #c64545;
+      --bad-soft: #f7dee1;
+      --r-md: 8px;
+      --r-lg: 12px;
+      --r-pill: 9999px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font: 16px/1.55 "Inter", -apple-system, sans-serif;
+      color: var(--body);
+      background: var(--canvas);
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 64px 24px 96px; }
+    h1, h2, h3 { font-family: "EB Garamond", Garamond, serif; font-weight: 400; color: var(--ink); margin: 0 0 0.4em; line-height: 1.1; }
+    h1 { font-size: 3rem; letter-spacing: -0.025em; }
+    h2 { font-size: 1.7rem; letter-spacing: -0.02em; margin-top: 2.8em; padding-top: 1.6em; border-top: 1px solid var(--hairline); }
+    h3 { font-size: 1.2rem; letter-spacing: -0.012em; margin-top: 1.6em; }
+    p { margin: 0 0 1em; }
+    code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.85em; background: var(--surface-card); padding: 0.1em 0.4em; border-radius: 4px; color: var(--ink); }
+    pre {
+      background: var(--surface-dark);
+      color: var(--on-dark);
+      padding: 16px 18px;
+      border-radius: var(--r-md);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      overflow-x: auto;
+      margin: 1em 0 1.6em;
+    }
+    pre code { background: transparent; color: inherit; padding: 0; }
+
+    .kicker { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.8em; font-weight: 500; }
+    .sub { color: var(--muted); font-size: 1.05rem; max-width: 640px; margin: 0 0 3em; }
+
+    .demo {
+      background: var(--surface-card);
+      border-radius: var(--r-lg);
+      padding: 24px;
+      margin: 1em 0 0;
+    }
+    .demo-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+    .demo-out {
+      margin-top: 14px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.85rem;
+      color: var(--ink);
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      padding: 10px 14px;
+      min-height: 38px;
+    }
+
+    /* Range slider */
+    .slider-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 64px;
+      align-items: center;
+      gap: 16px;
+    }
+    .slider-row label { font-weight: 500; color: var(--ink); font-size: 0.95rem; }
+    .slider-row .val {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.92rem;
+      color: var(--coral-active);
+      text-align: right;
+    }
+    input[type="range"] {
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      background: var(--hairline);
+      border-radius: 2px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px; height: 20px;
+      background: var(--coral);
+      border-radius: 50%;
+      cursor: grab;
+      border: 2px solid var(--canvas);
+      box-shadow: 0 0 0 1px var(--coral);
+    }
+    input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; background: var(--coral-active); }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px; height: 20px;
+      background: var(--coral);
+      border-radius: 50%;
+      cursor: grab;
+      border: 2px solid var(--canvas);
+      box-shadow: 0 0 0 1px var(--coral);
+    }
+
+    /* Switch (toggle) */
+    .switch-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      margin-bottom: 8px;
+    }
+    .switch-row .name { font-weight: 500; color: var(--ink); }
+    .switch-row .meta { font-size: 0.85rem; color: var(--muted); }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px; height: 22px;
+      flex-shrink: 0;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch .slider-knob {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: var(--muted-soft);
+      border-radius: 22px;
+      transition: 0.2s;
+    }
+    .switch .slider-knob::before {
+      position: absolute;
+      content: "";
+      height: 18px; width: 18px;
+      left: 2px; top: 2px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.2s;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .switch input:checked + .slider-knob { background: var(--coral); }
+    .switch input:checked + .slider-knob::before { transform: translateX(18px); }
+
+    /* Segmented control */
+    .segmented {
+      display: inline-flex;
+      background: var(--surface-card);
+      border-radius: var(--r-md);
+      padding: 4px;
+      gap: 2px;
+    }
+    .segmented button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+      font-size: 0.88rem;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .segmented button.active {
+      background: var(--canvas);
+      color: var(--ink);
+    }
+
+    /* Color picker / swatch picker */
+    .swatch-picker {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .swatch-picker button {
+      appearance: none;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--canvas);
+      box-shadow: 0 0 0 1px var(--hairline);
+      cursor: pointer;
+      padding: 0;
+    }
+    .swatch-picker button.selected {
+      box-shadow: 0 0 0 2px var(--ink);
+    }
+
+    /* Drag-and-drop columns */
+    .columns {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+    .column {
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      padding: 14px;
+      min-height: 140px;
+    }
+    .column h4 {
+      margin: 0 0 12px;
+      font-family: "Inter", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+    .column h4 .count {
+      background: var(--surface-card);
+      color: var(--ink);
+      padding: 1px 8px;
+      border-radius: var(--r-pill);
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .card-item {
+      background: var(--surface-card);
+      border-radius: var(--r-md);
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      cursor: grab;
+      font-size: 0.9rem;
+      color: var(--ink);
+      user-select: none;
+    }
+    .card-item:active { cursor: grabbing; }
+    .card-item.dragging { opacity: 0.4; }
+    .column.drop-target {
+      background: var(--coral-soft);
+      border-color: var(--coral);
+      outline: 2px dashed var(--coral);
+      outline-offset: -2px;
+    }
+
+    /* Sortable list */
+    .sortable-list { display: grid; gap: 8px; }
+    .sort-item {
+      display: grid;
+      grid-template-columns: 32px 1fr 80px;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      cursor: grab;
+      font-size: 0.92rem;
+    }
+    .sort-item:active { cursor: grabbing; }
+    .sort-item .rank {
+      font-family: "EB Garamond", Garamond, serif;
+      font-size: 1.1rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .sort-item .handle {
+      font-family: "JetBrains Mono", monospace;
+      color: var(--muted-soft);
+      text-align: right;
+      font-size: 0.85rem;
+    }
+
+    /* Filter input + chips */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .filter-bar input[type="search"] {
+      flex: 1;
+      min-width: 200px;
+      background: var(--canvas);
+      color: var(--ink);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      padding: 10px 14px;
+      font: inherit;
+      font-family: "Inter", sans-serif;
+    }
+    .filter-bar input:focus {
+      outline: none;
+      border-color: var(--coral);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--coral) 15%, transparent);
+    }
+    .filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter-chip {
+      appearance: none;
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      color: var(--muted);
+      font: inherit;
+      font-family: "Inter", sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: var(--r-pill);
+      cursor: pointer;
+    }
+    .filter-chip.active { background: var(--coral); color: var(--on-primary); border-color: var(--coral); }
+    .filter-list { display: grid; gap: 6px; margin-top: 8px; }
+    .filter-row {
+      padding: 8px 12px;
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    .filter-row .tag {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* Number stepper */
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      background: var(--canvas);
+      overflow: hidden;
+    }
+    .stepper button {
+      appearance: none;
+      background: transparent;
+      border: 0;
+      color: var(--ink);
+      width: 36px; height: 36px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    .stepper button:hover { background: var(--surface-card); }
+    .stepper .stepper-val {
+      width: 50px;
+      text-align: center;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.95rem;
+      color: var(--ink);
+    }
+
+    /* Sticky export bar */
+    .export-bar {
+      position: sticky;
+      bottom: 0;
+      margin: 2.4em -24px -96px;
+      padding: 18px 24px;
+      background: color-mix(in srgb, var(--canvas) 92%, transparent);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--hairline);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .button-primary {
+      appearance: none; border: 0;
+      background: var(--coral);
+      color: var(--on-primary);
+      font: inherit;
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+      font-size: 0.92rem;
+      padding: 12px 22px;
+      border-radius: var(--r-md);
+      cursor: pointer;
+    }
+    .reset-link {
+      font-size: 0.88rem;
+      color: var(--muted);
+      background: none;
+      border: 0;
+      cursor: pointer;
+      padding: 0;
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 32px 18px 64px; }
+      h1 { font-size: 2.1rem; }
+      .slider-row { grid-template-columns: 1fr; gap: 6px; }
+      .slider-row .val { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="kicker">Gallery · Interaction primitives</div>
+    <h1>Interaction primitives</h1>
+    <p class="sub">Copy-paste primitives for any interactive artifact. Each demo is followed by the minimal HTML+JS needed to reproduce it. Lift only what you need. Don't include this entire file in your output — pull the relevant block.</p>
+
+    <h2>Range slider</h2>
+    <p>Use when the user wants to feel a continuous value — opacity, easing, font size, debounce ms, threshold.</p>
+    <div class="demo">
+      <div class="demo-label">Live</div>
+      <div class="slider-row">
+        <label for="s1">Opacity</label>
+        <input type="range" id="s1" min="0" max="100" value="60">
+        <span class="val" id="s1v">60%</span>
+      </div>
+      <div class="slider-row" style="margin-top:12px">
+        <label for="s2">Font size</label>
+        <input type="range" id="s2" min="12" max="48" value="20">
+        <span class="val" id="s2v">20px</span>
+      </div>
+      <div class="demo-out" id="s-out">opacity 60% · font 20px</div>
+    </div>
+<pre><code>&lt;input type="range" id="s1" min="0" max="100" value="60"&gt;
+&lt;span id="s1v"&gt;60%&lt;/span&gt;
+&lt;script&gt;
+  const s1 = document.getElementById('s1');
+  const s1v = document.getElementById('s1v');
+  s1.addEventListener('input', () =&gt; { s1v.textContent = s1.value + '%'; });
+&lt;/script&gt;</code></pre>
+
+    <h2>Switch (toggle)</h2>
+    <p>Use for boolean state. One per row. When meaning of one depends on another, use the dependency warning convention from <code>patterns/editor.md</code>.</p>
+    <div class="demo">
+      <div class="switch-row">
+        <div><div class="name">Auto-retry on failure</div><div class="meta">Retries up to 3 times with exponential backoff.</div></div>
+        <label class="switch"><input type="checkbox" checked><span class="slider-knob"></span></label>
+      </div>
+      <div class="switch-row">
+        <div><div class="name">Verbose logging</div><div class="meta">Emits each step to stdout.</div></div>
+        <label class="switch"><input type="checkbox"><span class="slider-knob"></span></label>
+      </div>
+    </div>
+<pre><code>&lt;label class="switch"&gt;
+  &lt;input type="checkbox" checked&gt;
+  &lt;span class="slider-knob"&gt;&lt;/span&gt;
+&lt;/label&gt;</code></pre>
+
+    <h2>Segmented control</h2>
+    <p>Use for mutually-exclusive choice of 2–5 options. Replaces a select dropdown when the values are short and the user benefits from seeing them all.</p>
+    <div class="demo">
+      <div class="segmented" id="seg1">
+        <button data-v="all" class="active">All</button>
+        <button data-v="open">Open</button>
+        <button data-v="closed">Closed</button>
+      </div>
+      <div class="demo-out" id="seg-out">filter = all</div>
+    </div>
+<pre><code>&lt;div class="segmented"&gt;
+  &lt;button data-v="all" class="active"&gt;All&lt;/button&gt;
+  &lt;button data-v="open"&gt;Open&lt;/button&gt;
+  &lt;button data-v="closed"&gt;Closed&lt;/button&gt;
+&lt;/div&gt;
+&lt;script&gt;
+  document.querySelectorAll('.segmented button').forEach(b =&gt; {
+    b.addEventListener('click', () =&gt; {
+      b.parentElement.querySelectorAll('button').forEach(x =&gt; x.classList.remove('active'));
+      b.classList.add('active');
+      // state.filter = b.dataset.v; render();
+    });
+  });
+&lt;/script&gt;</code></pre>
+
+    <h2>Swatch / color picker</h2>
+    <p>Use when the value is one of a small palette — theme color, severity, category.</p>
+    <div class="demo">
+      <div class="swatch-picker" id="sw">
+        <button data-c="#cc785c" class="selected" style="background:#cc785c"></button>
+        <button data-c="#5db872" style="background:#5db872"></button>
+        <button data-c="#d4a017" style="background:#d4a017"></button>
+        <button data-c="#c64545" style="background:#c64545"></button>
+        <button data-c="#181715" style="background:#181715"></button>
+      </div>
+      <div class="demo-out" id="sw-out">selected #cc785c</div>
+    </div>
+
+    <h2>Number stepper</h2>
+    <p>Use when the value is small-integer (1–20) and the user benefits from one-click increment.</p>
+    <div class="demo">
+      <div class="stepper">
+        <button id="step-dec">−</button>
+        <span class="stepper-val" id="step-v">3</span>
+        <button id="step-inc">+</button>
+      </div>
+    </div>
+
+    <h2>Drag-and-drop columns</h2>
+    <p>The bread and butter of <code>editor</code>-pattern artifacts. Real HTML5 drag API. Never fake with click-to-cycle.</p>
+    <div class="demo">
+      <div class="columns" id="board">
+        <div class="column" data-col="now">
+          <h4>Now <span class="count">2</span></h4>
+          <div class="card-item" data-id="t1" draggable="true">Migrate auth service</div>
+          <div class="card-item" data-id="t2" draggable="true">Backfill user table</div>
+        </div>
+        <div class="column" data-col="next">
+          <h4>Next <span class="count">1</span></h4>
+          <div class="card-item" data-id="t3" draggable="true">Rate-limit middleware</div>
+        </div>
+        <div class="column" data-col="later">
+          <h4>Later <span class="count">1</span></h4>
+          <div class="card-item" data-id="t4" draggable="true">Multi-region failover</div>
+        </div>
+        <div class="column" data-col="cut">
+          <h4>Cut <span class="count">0</span></h4>
+        </div>
+      </div>
+    </div>
+<pre><code>&lt;script&gt;
+  let dragId = null;
+  document.querySelectorAll('.card-item').forEach(card =&gt; {
+    card.addEventListener('dragstart', () =&gt; {
+      dragId = card.dataset.id;
+      card.classList.add('dragging');
+    });
+    card.addEventListener('dragend', () =&gt; card.classList.remove('dragging'));
+  });
+  document.querySelectorAll('.column').forEach(col =&gt; {
+    col.addEventListener('dragover', e =&gt; { e.preventDefault(); col.classList.add('drop-target'); });
+    col.addEventListener('dragleave', () =&gt; col.classList.remove('drop-target'));
+    col.addEventListener('drop', e =&gt; {
+      e.preventDefault();
+      col.classList.remove('drop-target');
+      const card = document.querySelector(`.card-item[data-id="${dragId}"]`);
+      if (card) col.appendChild(card);
+      // update state.items[dragId].column = col.dataset.col;
+      // recount + render();
+    });
+  });
+&lt;/script&gt;</code></pre>
+
+    <h2>Sortable list (reorder)</h2>
+    <p>Drag items vertically to reorder. Use for ranking, prioritization, agenda.</p>
+    <div class="demo">
+      <div class="sortable-list" id="sortable">
+        <div class="sort-item" draggable="true" data-id="r1"><span class="rank">1</span><span>Performance regression in feed renderer</span><span class="handle">drag ↕</span></div>
+        <div class="sort-item" draggable="true" data-id="r2"><span class="rank">2</span><span>Stale cache on profile load</span><span class="handle">drag ↕</span></div>
+        <div class="sort-item" draggable="true" data-id="r3"><span class="rank">3</span><span>Login captcha not localized</span><span class="handle">drag ↕</span></div>
+        <div class="sort-item" draggable="true" data-id="r4"><span class="rank">4</span><span>Sidebar collapse animation jitter</span><span class="handle">drag ↕</span></div>
+      </div>
+    </div>
+
+    <h2>Filter (search + chips)</h2>
+    <p>Use when the user is scanning a list and needs to slice it. Combine free-text search with category chips.</p>
+    <div class="demo">
+      <div class="filter-bar">
+        <input type="search" id="q" placeholder="Search...">
+        <div class="filter-chips" id="chips">
+          <button class="filter-chip active" data-f="all">All</button>
+          <button class="filter-chip" data-f="bug">Bug</button>
+          <button class="filter-chip" data-f="feature">Feature</button>
+          <button class="filter-chip" data-f="chore">Chore</button>
+        </div>
+      </div>
+      <div class="filter-list" id="filtered">
+        <div class="filter-row" data-tag="bug"><span>Login form double-submits</span><span class="tag">bug</span></div>
+        <div class="filter-row" data-tag="feature"><span>Add dark mode toggle</span><span class="tag">feature</span></div>
+        <div class="filter-row" data-tag="chore"><span>Bump axios to 1.7</span><span class="tag">chore</span></div>
+        <div class="filter-row" data-tag="bug"><span>Off-by-one in pagination</span><span class="tag">bug</span></div>
+      </div>
+    </div>
+
+    <h2>Sticky export bar</h2>
+    <p>The bottom of every interactive artifact. Reset link on the left (small + quiet), primary CTA on the right (big + coral). One primary CTA per page.</p>
+    <p>Scroll to the bottom of this file to see it in action.</p>
+
+    <h2>How to use this file</h2>
+    <p>When you need an interaction, find the closest demo above, copy its HTML + JS into your artifact, and adapt. Don't write interactions from scratch — every artifact then drifts in its own direction. Match the look (cream + coral + hairline) by reusing the tokens.</p>
+    <p>This file shows <em>interactions</em>. Shape is per-pattern. Look is in <code>gallery/look.html</code>.</p>
+  </main>
+
+  <div class="export-bar">
+    <button class="reset-link" type="button">Reset</button>
+    <button class="button-primary" id="copyBtn">Copy as markdown</button>
+  </div>
+
+  <script>
+    // Slider
+    const s1 = document.getElementById('s1');
+    const s1v = document.getElementById('s1v');
+    const s2 = document.getElementById('s2');
+    const s2v = document.getElementById('s2v');
+    const sOut = document.getElementById('s-out');
+    function renderSlider() {
+      s1v.textContent = s1.value + '%';
+      s2v.textContent = s2.value + 'px';
+      sOut.textContent = `opacity ${s1.value}% · font ${s2.value}px`;
+    }
+    s1.addEventListener('input', renderSlider);
+    s2.addEventListener('input', renderSlider);
+
+    // Segmented
+    document.querySelectorAll('#seg1 button').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('#seg1 button').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        document.getElementById('seg-out').textContent = 'filter = ' + b.dataset.v;
+      });
+    });
+
+    // Swatches
+    document.querySelectorAll('#sw button').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('#sw button').forEach(x => x.classList.remove('selected'));
+        b.classList.add('selected');
+        document.getElementById('sw-out').textContent = 'selected ' + b.dataset.c;
+      });
+    });
+
+    // Stepper
+    let step = 3;
+    const stepV = document.getElementById('step-v');
+    document.getElementById('step-inc').addEventListener('click', () => { step++; stepV.textContent = step; });
+    document.getElementById('step-dec').addEventListener('click', () => { if (step > 0) { step--; stepV.textContent = step; } });
+
+    // Drag columns
+    let dragId = null;
+    function bindCard(card) {
+      card.addEventListener('dragstart', () => { dragId = card.dataset.id; card.classList.add('dragging'); });
+      card.addEventListener('dragend', () => card.classList.remove('dragging'));
+    }
+    document.querySelectorAll('.card-item').forEach(bindCard);
+    document.querySelectorAll('.column').forEach(col => {
+      col.addEventListener('dragover', e => { e.preventDefault(); col.classList.add('drop-target'); });
+      col.addEventListener('dragleave', () => col.classList.remove('drop-target'));
+      col.addEventListener('drop', e => {
+        e.preventDefault();
+        col.classList.remove('drop-target');
+        const card = document.querySelector(`.card-item[data-id="${dragId}"]`);
+        if (card) col.appendChild(card);
+        document.querySelectorAll('.column').forEach(c => {
+          c.querySelector('.count').textContent = c.querySelectorAll('.card-item').length;
+        });
+      });
+    });
+
+    // Sortable
+    let sortDragId = null;
+    function bindSortItem(item) {
+      item.addEventListener('dragstart', () => { sortDragId = item.dataset.id; item.classList.add('dragging'); });
+      item.addEventListener('dragend', () => {
+        item.classList.remove('dragging');
+        renderRanks();
+      });
+      item.addEventListener('dragover', e => {
+        e.preventDefault();
+        const dragging = document.querySelector(`.sort-item[data-id="${sortDragId}"]`);
+        if (dragging && dragging !== item) {
+          const rect = item.getBoundingClientRect();
+          const after = e.clientY > rect.top + rect.height / 2;
+          item.parentElement.insertBefore(dragging, after ? item.nextSibling : item);
+        }
+      });
+    }
+    function renderRanks() {
+      document.querySelectorAll('#sortable .sort-item').forEach((it, i) => {
+        it.querySelector('.rank').textContent = i + 1;
+      });
+    }
+    document.querySelectorAll('#sortable .sort-item').forEach(bindSortItem);
+
+    // Filter
+    let activeFilter = 'all';
+    const q = document.getElementById('q');
+    function applyFilter() {
+      const query = q.value.toLowerCase();
+      document.querySelectorAll('.filter-row').forEach(r => {
+        const matchTag = activeFilter === 'all' || r.dataset.tag === activeFilter;
+        const matchText = r.textContent.toLowerCase().includes(query);
+        r.style.display = (matchTag && matchText) ? '' : 'none';
+      });
+    }
+    q.addEventListener('input', applyFilter);
+    document.querySelectorAll('#chips .filter-chip').forEach(c => {
+      c.addEventListener('click', () => {
+        document.querySelectorAll('#chips .filter-chip').forEach(x => x.classList.remove('active'));
+        c.classList.add('active');
+        activeFilter = c.dataset.f;
+        applyFilter();
+      });
+    });
+
+    // Export demo
+    document.getElementById('copyBtn').addEventListener('click', async (e) => {
+      const txt = `# Interaction state\n\nopacity: ${s1.value}%\nfont: ${s2.value}px\n`;
+      await navigator.clipboard.writeText(txt);
+      const label = e.target.textContent;
+      e.target.textContent = 'Copied';
+      e.target.dataset.copied = '1';
+      setTimeout(() => { e.target.textContent = label; e.target.dataset.copied = ''; }, 1500);
+    });
+  </script>
+</body>
+</html>

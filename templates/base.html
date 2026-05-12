@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><!-- TITLE --></title>
+  <style>
+    /* =========================================================
+       BASE TOKENS — Claude (Anthropic) editorial system.
+       Cream canvas + coral + dark navy. Don't override per
+       artifact; the whole point of the skill is a consistent look.
+       ========================================================= */
+    :root {
+      /* Surfaces */
+      --canvas: #faf9f5;
+      --surface-soft: #f5f0e8;
+      --surface-card: #efe9de;
+      --surface-cream-strong: #e8e0d2;
+      --surface-dark: #181715;
+      --surface-dark-elevated: #252320;
+      --surface-dark-soft: #1f1e1b;
+
+      /* Brand */
+      --coral: #cc785c;
+      --coral-active: #a9583e;
+      --coral-soft: #f3e2d8;
+
+      /* Text */
+      --ink: #141413;
+      --body-strong: #252523;
+      --body: #3d3d3a;
+      --muted: #6c6a64;
+      --muted-soft: #8e8b82;
+      --on-primary: #ffffff;
+      --on-dark: #faf9f5;
+      --on-dark-soft: #a09d96;
+
+      /* Lines */
+      --hairline: #e6dfd8;
+      --hairline-soft: #ebe6df;
+
+      /* Semantic */
+      --good: #5db872;
+      --good-soft: #dff1e1;
+      --warn: #d4a017;
+      --warn-soft: #fbeed4;
+      --bad: #c64545;
+      --bad-soft: #f7dee1;
+
+      /* Radius */
+      --r-xs: 4px;
+      --r-sm: 6px;
+      --r-md: 8px;
+      --r-lg: 12px;
+      --r-xl: 16px;
+      --r-pill: 9999px;
+
+      /* Spacing */
+      --s-xxs: 4px;
+      --s-xs: 8px;
+      --s-sm: 12px;
+      --s-md: 16px;
+      --s-lg: 24px;
+      --s-xl: 32px;
+      --s-xxl: 48px;
+      --s-section: 96px;
+
+      /* Layout */
+      --maxw: 880px;
+
+      /* Aliases kept for back-compat with existing pattern playbooks
+         (patterns still reference these names). Map onto the new system. */
+      --bg: var(--canvas);
+      --surface: var(--canvas);
+      --ink-muted: var(--muted);
+      --ink-faint: var(--muted-soft);
+      --line: var(--hairline);
+      --line-strong: var(--surface-cream-strong);
+      --accent: var(--coral);
+      --accent-soft: var(--coral-soft);
+      --code-bg: var(--surface-card);
+      --radius: var(--r-md);
+    }
+
+    /* =========================================================
+       RESET & TYPOGRAPHY
+       Display: EB Garamond (open-source Copernicus stand-in),
+                weight 400, negative letter-spacing — non-negotiable.
+       Body:    Inter / system humanist sans, weight 400-500.
+       Mono:    JetBrains Mono / ui-monospace.
+       No remote font loads — fallback stacks only, per offline rule.
+       ========================================================= */
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font: 16px/1.55 "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--body);
+      background: var(--canvas);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 64px 24px 96px; }
+    h1, h2, h3, h4 {
+      font-family: "EB Garamond", "Cormorant Garamond", "Tiempos Headline", Garamond, "Times New Roman", serif;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.15;
+      margin: 0 0 0.4em;
+    }
+    h1 { font-size: 3rem;    letter-spacing: -0.025em; line-height: 1.05; }
+    h2 { font-size: 2.1rem;  letter-spacing: -0.02em;  margin-top: 2.4em; }
+    h3 { font-size: 1.45rem; letter-spacing: -0.012em; margin-top: 1.6em; }
+    h4 { font-size: 1.1rem;  letter-spacing: -0.005em; font-weight: 500; }
+    p { margin: 0 0 1em; color: var(--body); }
+    strong { color: var(--body-strong); font-weight: 600; }
+    a {
+      color: var(--coral);
+      text-decoration: none;
+      border-bottom: 1px solid color-mix(in srgb, var(--coral) 30%, transparent);
+    }
+    a:hover { border-bottom-color: var(--coral); }
+    code, pre, kbd {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.9em;
+    }
+    pre {
+      background: var(--surface-dark);
+      color: var(--on-dark);
+      border-radius: var(--r-lg);
+      padding: 18px 20px;
+      overflow-x: auto;
+      line-height: 1.55;
+    }
+    pre code { background: transparent; padding: 0; color: inherit; }
+    code {
+      background: var(--surface-card);
+      color: var(--ink);
+      padding: 0.1em 0.35em;
+      border-radius: var(--r-xs);
+    }
+    hr { border: 0; border-top: 1px solid var(--hairline); margin: 2.4em 0; }
+    table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--hairline);
+      vertical-align: top;
+      font-size: 0.95rem;
+    }
+    th {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* =========================================================
+       HEADER ELEMENTS — top of every artifact
+       ========================================================= */
+    .kicker {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.8em;
+      font-weight: 500;
+    }
+    .prompt {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--body);
+      background: var(--surface-card);
+      border-left: 3px solid var(--coral);
+      padding: 14px 18px;
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      margin: 0 0 2.8em;
+    }
+    .prompt::before {
+      content: "Prompt";
+      display: block;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 4px;
+    }
+
+    /* =========================================================
+       SHARED UTILITY KIT — patterns reuse these.
+       Don't redefine in pattern-specific CSS; extend if needed.
+       ========================================================= */
+
+    /* Callouts: highlighted blocks for TL;DRs, blockers, decisions. */
+    .callout {
+      padding: 16px 20px;
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      margin: 14px 0;
+      border-left: 3px solid;
+      background: var(--surface-card);
+    }
+    .callout > strong:first-child {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .callout.info { background: var(--coral-soft); border-color: var(--coral); }
+    .callout.info > strong:first-child { color: var(--coral); }
+    .callout.warn { background: var(--warn-soft); border-color: var(--warn); }
+    .callout.warn > strong:first-child { color: var(--warn); }
+    .callout.bad  { background: var(--bad-soft);  border-color: var(--bad); }
+    .callout.bad  > strong:first-child { color: var(--bad); }
+    .callout.good { background: var(--good-soft); border-color: var(--good); }
+    .callout.good > strong:first-child { color: var(--good); }
+
+    /* Coral full-bleed callout — the brand voltage moment.
+       Use scarcely; one per artifact, max. */
+    .callout-coral {
+      background: var(--coral);
+      color: var(--on-primary);
+      border: 0;
+      border-radius: var(--r-lg);
+      padding: var(--s-xxl);
+      margin: 2em 0;
+    }
+    .callout-coral h2, .callout-coral h3 { color: var(--on-primary); margin-top: 0; }
+    .callout-coral p { color: var(--on-primary); opacity: 0.95; }
+
+    /* Dark surface band — code mockups, model showcases, post-mortem
+       root-cause panels. Pacing partner to cream cards. */
+    .surface-dark {
+      background: var(--surface-dark);
+      color: var(--on-dark);
+      border-radius: var(--r-lg);
+      padding: var(--s-xl);
+      margin: 1.6em 0;
+    }
+    .surface-dark h2, .surface-dark h3, .surface-dark h4 { color: var(--on-dark); }
+    .surface-dark p { color: var(--on-dark-soft); }
+    .surface-dark code { background: var(--surface-dark-soft); color: var(--on-dark); }
+    .surface-dark pre  { background: var(--surface-dark-soft); }
+
+    /* Chips: status tags, severity labels. */
+    .chip {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--r-pill);
+      vertical-align: middle;
+      background: var(--surface-card);
+      color: var(--muted);
+    }
+    .chip.coral { background: var(--coral); color: var(--on-primary); }
+    .chip.info  { background: var(--coral-soft); color: var(--coral-active); }
+    .chip.warn  { background: var(--warn-soft);  color: var(--warn); }
+    .chip.bad   { background: var(--bad-soft);   color: var(--bad); }
+    .chip.good  { background: var(--good-soft);  color: var(--good); }
+
+    /* Grids: side-by-side comparisons, contact sheets, anything that fans out. */
+    .grid { display: grid; gap: var(--s-lg); }
+    .grid.cols-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .grid.cols-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    @media (max-width: 720px) { .grid { grid-template-columns: 1fr !important; } }
+
+    /* Cards: bounded surfaces. Cream-card by default. */
+    .card {
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-lg);
+      padding: var(--s-xl);
+      background: var(--surface-card);
+    }
+    .card .num {
+      display: inline-block;
+      font-family: "EB Garamond", Garamond, serif;
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-right: 8px;
+    }
+    .card .summary { color: var(--body); margin: 0.4em 0 1em; font-size: 0.95rem; }
+    .card.featured { background: var(--surface-dark); color: var(--on-dark); border: 0; }
+    .card.featured h3, .card.featured h4 { color: var(--on-dark); }
+    .card.featured p { color: var(--on-dark-soft); }
+
+    /* Timeline: vertical sequence with dots. */
+    .timeline { position: relative; padding-left: 32px; margin: 1.4em 0; }
+    .timeline::before {
+      content: ""; position: absolute; left: 8px; top: 0; bottom: 0;
+      width: 2px; background: var(--hairline);
+    }
+    .timeline .event { position: relative; padding: 8px 0 16px; }
+    .timeline .event::before {
+      content: ""; position: absolute; left: -32px; top: 12px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--muted-soft);
+      border: 2px solid var(--canvas);
+      margin-left: 2px;
+    }
+    .timeline .event.info::before { background: var(--coral); }
+    .timeline .event.warn::before { background: var(--warn); }
+    .timeline .event.bad::before  { background: var(--bad); }
+    .timeline .event.good::before { background: var(--good); }
+    .timeline .event .when {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 0.8rem;
+      color: var(--muted-soft);
+    }
+    .timeline .event h4 { margin: 4px 0; font-size: 1rem; font-family: inherit; font-weight: 500; color: var(--ink); }
+
+    /* Section numbering. */
+    .section-num {
+      display: inline-block;
+      background: var(--ink);
+      color: var(--canvas);
+      font-family: "Inter", -apple-system, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: var(--r-pill);
+      margin-right: 12px;
+      vertical-align: middle;
+      letter-spacing: 0.05em;
+    }
+
+    /* At-a-glance stat row. */
+    .glance {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: var(--s-md);
+      margin: 2em 0;
+      padding: var(--s-lg);
+      background: var(--surface-card);
+      border-radius: var(--r-lg);
+    }
+    .glance .stat .label {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .glance .stat .val {
+      font-family: "EB Garamond", Garamond, serif;
+      font-size: 1.7rem;
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+
+    /* Native <details> as collapsible cards. */
+    details {
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      padding: 14px 18px;
+      margin: 12px 0;
+      background: var(--canvas);
+    }
+    details > summary {
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--ink);
+      list-style: none;
+    }
+    details > summary::before {
+      content: "›";
+      display: inline-block;
+      margin-right: 10px;
+      color: var(--muted);
+      transition: transform 0.15s;
+      font-weight: 400;
+    }
+    details[open] > summary::before { transform: rotate(90deg); }
+    details > *:not(summary) { margin-top: 0.6em; }
+
+    /* Badges (pill). */
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: var(--r-pill);
+      background: var(--surface-card);
+      color: var(--ink);
+    }
+    .badge.coral { background: var(--coral); color: var(--on-primary); text-transform: uppercase; }
+
+    /* Buttons.
+       .button-primary = coral CTA (the export-primary on editors).
+       .button-secondary = cream + hairline.
+       .button-text = inline text link.
+       Legacy aliases (.export, .export-primary) preserved. */
+    button {
+      font: inherit;
+      font-family: "Inter", -apple-system, sans-serif;
+      cursor: pointer;
+    }
+    .button-primary, button.export-primary {
+      appearance: none;
+      border: 0;
+      background: var(--coral);
+      color: var(--on-primary);
+      font-weight: 500;
+      font-size: 0.92rem;
+      padding: 12px 22px;
+      border-radius: var(--r-md);
+    }
+    .button-primary:hover, button.export-primary:hover { background: var(--coral-active); }
+    .button-primary[data-copied="1"], button.export-primary[data-copied="1"] {
+      background: var(--good);
+    }
+    .button-secondary, button.export {
+      appearance: none;
+      border: 1px solid var(--hairline);
+      background: var(--canvas);
+      color: var(--ink);
+      font-weight: 500;
+      font-size: 0.92rem;
+      padding: 11px 20px;
+      border-radius: var(--r-md);
+    }
+    .button-secondary:hover, button.export:hover { border-color: var(--muted); }
+    .button-secondary[data-copied="1"], button.export[data-copied="1"] {
+      background: var(--good-soft);
+      border-color: var(--good);
+      color: var(--good);
+    }
+    .button-text {
+      appearance: none;
+      background: none;
+      border: 0;
+      color: var(--coral);
+      font-weight: 500;
+      padding: 4px 0;
+      border-bottom: 1px solid color-mix(in srgb, var(--coral) 30%, transparent);
+      border-radius: 0;
+    }
+    .button-text:hover { border-bottom-color: var(--coral); }
+
+    /* Sticky export bar for editor patterns. */
+    .export-bar {
+      position: sticky;
+      bottom: 0;
+      margin: 2.4em -24px -96px;
+      padding: 18px 24px;
+      background: color-mix(in srgb, var(--canvas) 92%, transparent);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--hairline);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--s-md);
+    }
+    .reset-link {
+      font-size: 0.88rem;
+      color: var(--muted);
+      background: none;
+      border: 0;
+      cursor: pointer;
+      padding: 0;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .reset-link:hover { color: var(--ink); }
+
+    /* Form primitives — see gallery/interactions.html for live versions. */
+    input[type="text"], input[type="search"], input[type="number"], select, textarea {
+      font: inherit;
+      font-family: "Inter", -apple-system, sans-serif;
+      background: var(--canvas);
+      color: var(--ink);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      padding: 10px 14px;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--coral);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--coral) 15%, transparent);
+    }
+
+    /* Mobile adjustments. */
+    @media (max-width: 720px) {
+      .wrap { padding: 32px 18px 64px; }
+      h1 { font-size: 2.1rem; }
+      h2 { font-size: 1.5rem; }
+      h3 { font-size: 1.2rem; }
+      .callout-coral { padding: var(--s-xl); }
+      .surface-dark { padding: var(--s-lg); }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="kicker"><!-- e.g. "Options · <topic>" --></div>
+    <h1><!-- TITLE --></h1>
+    <p class="prompt"><!-- The user's actual prompt, verbatim or near-verbatim --></p>
+
+    <!-- PATTERN-SPECIFIC CONTENT GOES HERE -->
+
+    <!-- If interactive, end with:
+    <div class="export-bar">
+      <button class="reset-link" type="button">Reset</button>
+      <button class="button-primary" id="copyBtn">Copy as markdown</button>
+    </div>
+    <script>
+      document.getElementById('copyBtn').addEventListener('click', async (e) => {
+        const md = buildExport(); // pattern-specific
+        await navigator.clipboard.writeText(md);
+        e.target.dataset.copied = '1';
+        const label = e.target.textContent;
+        e.target.textContent = 'Copied';
+        setTimeout(() => { e.target.dataset.copied = ''; e.target.textContent = label; }, 1500);
+      });
+    </script>
+    -->
+  </main>
+</body>
+</html>
