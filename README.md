@@ -46,6 +46,10 @@ cp -r /tmp/html-skill-src/skills/html .claude/skills/html
 rm -rf /tmp/html-skill-src
 ```
 
+<p align="left">
+  <img src="demo.gif" alt="Example HTML artifact — card layout exploration with live controls (project tiles, density, metadata)" />
+</p>
+
 ## What this skill is for
 
 **Agent-generated artifacts for a human reader.** Throwaway or reference, not production.
