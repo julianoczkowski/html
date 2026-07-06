@@ -185,3 +185,14 @@ These files are **instructions for local AI tools**. Treat them like any other p
 - Premise from Thariq Shihipar's [_The unreasonable effectiveness of HTML_](https://thariqs.github.io/html-effectiveness/) ([repo](https://github.com/ThariqS/html-effectiveness)).
 - Editorial look adapted from the [Anthropic Claude](https://claude.com) design system — cream canvas, coral accent, EB Garamond display, Inter body.
 - Packaged for the Vercel [skills CLI](https://github.com/vercel-labs/skills) by [Julian Oczkowski](https://youtube.com/@aiforwork_app).
+
+## Author
+
+<img width="236" height="236" alt="avatar2" src="https://github.com/user-attachments/assets/5677ddb5-6b0b-4054-a70b-a143761dd307" />
+
+Built by **Julian Oczkowski** — I build AI tools for knowledge work.
+
+- 🎥 **[YouTube · @aiforwork_app](https://www.youtube.com/@aiforwork_app)** — walkthroughs and AI-for-work tutorials
+- ✍️ **[Medium](https://medium.com/@julian.oczkowski)** — deep dives on product and AI workflows
+- 💼 **[LinkedIn](https://www.linkedin.com/in/julianoczkowski/)** — connect and follow along
+
